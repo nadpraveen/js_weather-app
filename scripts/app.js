@@ -3,11 +3,9 @@ const card = document.querySelector('.card');
 const details = document.querySelector('.details');
 const time = document.querySelector('img.time');
 const icon = document.querySelector('.icon img');
+const forecast = new Forecast();
 
 const updateUi = (data) => {
-
-  // const cityData = data.cityData;
-  // const weatherData = data.weatherData;
 
   // destructring properties
   const {cityData, weatherData} = data;
@@ -29,43 +27,11 @@ const updateUi = (data) => {
  const iconSrc = `img/icons/${weatherData.WeatherIcon}.svg`;
  icon.setAttribute('src', iconSrc);
 
-
-//Without Ternery operator
- // let timeSrc = null;
- // if(weatherData.IsDayTime){
- //   timeSrc = 'img/day.svg';
- // }else{
- //   timeSrc = 'img/night.svg';
- // }
-
 // with ternery operator
   let timeSrc = weatherData.IsDayTime ? 'img/day.svg' : 'img/night.svg';
  time.setAttribute('src',timeSrc);
 
 }
-
-const updateCity = async (city) => {
-  const cityData = await getCity(city);
-  const weatherData = await getWeather(cityData.Key);
-
-/*
-old way of object representation
-when key and value are having diffrent names.
-*/
-
-  // return {
-  //   cityData : cityData,
-  //   weatherData : weatherData
-  // }
-
-/*
-object short hand representation
-it works when key and value both having the same name
-*/
-
-return {cityData, weatherData};
-
-};
 
 cityForm.addEventListener('submit', e => {
   // prevent formn default action
@@ -75,7 +41,7 @@ cityForm.addEventListener('submit', e => {
   const city = cityForm.city.value.trim();
   cityForm.reset();
 
-  updateCity(city).then(data=>{
+  forecast.updateCity(city).then(data=>{
     updateUi(data);
     // console.log(data);
   }).catch(err=>{
@@ -88,7 +54,7 @@ cityForm.addEventListener('submit', e => {
 });
 
 if(localStorage.getItem('city')){
-  updateCity(localStorage.getItem('city')).then(data=>{
+  forecast.updateCity(localStorage.getItem('city')).then(data=>{
     updateUi(data);
   }).catch(err=>{
     console.log(err);

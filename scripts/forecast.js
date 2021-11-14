@@ -1,32 +1,30 @@
-const key = 'GPxUZdiWl40xLtMmiIqAJPBKYEkjC5z3';
+class Forecast {
+  constructor() {
+    this.key = 'GPxUZdiWl40xLtMmiIqAJPBKYEkjC5z3';
+    this.weatherURI = 'http://dataservice.accuweather.com/currentconditions/v1/';
+    this.cityURI = 'http://dataservice.accuweather.com/locations/v1/cities/search';
+  }
 
-// Get Wether
-const getWeather = async (id) => {
-  const base = 'http://dataservice.accuweather.com/currentconditions/v1/';
-  const query = `${id}?apikey=${key}`;
+  async updateCity(city) {
+    const cityData = await this.getCity(city);
+    const weatherData = await this.getWeather(cityData.Key);
+    return {cityData, weatherData};
+  }
 
-  const response = await fetch(base+query);
-  const data = await response.json();
+  // Get Wether
+  async getWeather (id){
+    const query = `${id}?apikey=${this.key}`;
+    const response = await fetch(this.weatherURI+query);
+    const data = await response.json();
+    return data[0];
+  }
 
-  return data[0];
+  // Get City
+  async getCity (city){
+    const query = `?apikey=${this.key}&q=${city}`;
+    const response = await fetch(this.cityURI+query);
+    const data = await response.json();
+    return data[0];
+  }
+
 }
-
-
-// Get City
-const getCity = async (city) => {
-  const base = 'http://dataservice.accuweather.com/locations/v1/cities/search';
-  const query = `?apikey=${key}&q=${city}`;
-
-  const response = await fetch(base+query);
-  const data = await response.json();
-
-  return data[0];
-}
-
-// getCity('visakhapatnam')
-//   .then(data => {
-//     return getWeather(data.Key);
-//   }).then(data => {
-//     console.log(data);
-//   })
-//   .catch(err => console.log(err.message));
